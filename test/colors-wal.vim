@@ -1,0 +1,23 @@
+" Special
+let wallpaper  = "/home/zack/Pictures/wallpaper/headphones-paint-color-splash.jpg"
+let background = "#110f1e"
+let foreground = "#78ddea"
+let cursor     = "#78ddea"
+
+" Colors
+let color0  = "#110f1e"
+let color1  = "#C14039"
+let color2  = "#076D8E"
+let color3  = "#5A6592"
+let color4  = "#0794B1"
+let color5  = "#5BA5B8"
+let color6  = "#03B1CC"
+let color7  = "#78ddea"
+let color8  = "#549aa3"
+let color9  = "#C14039"
+let color10 = "#076D8E"
+let color11 = "#5A6592"
+let color12 = "#0794B1"
+let color13 = "#5BA5B8"
+let color14 = "#03B1CC"
+let color15 = "#78ddea"

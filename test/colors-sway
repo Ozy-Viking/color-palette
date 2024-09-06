@@ -1,0 +1,21 @@
+set $wallpaper /home/zack/Pictures/wallpaper/headphones-paint-color-splash.jpg
+
+set $background #110f1e
+set $foreground #78ddea
+
+set $color0 #110f1e
+set $color1 #C14039
+set $color2 #076D8E
+set $color3 #5A6592
+set $color4 #0794B1
+set $color5 #5BA5B8
+set $color6 #03B1CC
+set $color7 #78ddea
+set $color8 #549aa3
+set $color9 #C14039
+set $color10 #076D8E
+set $color11 #5A6592
+set $color12 #0794B1
+set $color13 #5BA5B8
+set $color14 #03B1CC
+set $color15 #78ddea
