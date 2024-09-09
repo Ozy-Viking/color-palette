@@ -8,13 +8,13 @@ pub const PRECISION_VAL: u32 = 5;
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct Color {
     /// red: 0-255
-    red: u8,
+    pub red: u8,
     /// green: 0-255
-    green: u8,
+    pub green: u8,
     /// blue: 0-255
-    blue: u8,
+    pub blue: u8,
     /// opacity: 0-255
-    opacity: u8,
+    pub opacity: u8,
 }
 
 #[allow(dead_code)]
@@ -41,8 +41,20 @@ impl Color {
         (self.red, self.green, self.blue)
     }
 
+    pub fn str_rgb(&self) -> String {
+        format!("{}, {}, {}", self.red, self.blue, self.blue).to_string()
+    }
+
     pub fn rgba(&self) -> (u8, u8, u8, u8) {
         (self.red, self.green, self.blue, self.opacity)
+    }
+
+    pub fn str_rgba(&self) -> String {
+        format!(
+            "{}, {}, {}, {}",
+            self.red, self.blue, self.blue, self.opacity
+        )
+        .to_string()
     }
 
     pub fn hsl(&self) -> (f64, f64, f64) {

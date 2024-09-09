@@ -7,13 +7,13 @@ use std::{
 use reader::get_pallete_filesnames;
 use slint::format;
 
-mod reader;
-mod writer;
+pub mod reader;
+pub mod writer;
 
 pub const DEFAULT_CONFIG_PATH: &str = "~/.config";
 pub const PROGRAM_NAME: &str = "color-palette";
 
-struct Config {
+pub struct Config {
     current_settings: BTreeMap<String, String>,
     default_settings: BTreeMap<String, String>,
 }
@@ -29,7 +29,15 @@ impl Default for Config {
         }
     }
 }
+pub fn config_palette_folder() -> PathBuf {
+    let conf_path = find_config_path().unwrap_or_else(|| PathBuf::from(DEFAULT_CONFIG_PATH));
+    let config_folder = ensure_config_folder_exists(&conf_path).expect("Unable to create a config folder, please set 'XDG_CONFIG_HOME' in environment variables before running again.");
+    let program_config_file = ensure_program_config_file_exists(&config_folder).expect("");
+    let palette_folder =
+        ensure_palette_folder_exists(&config_folder).expect("Folder should be good");
 
+    config_folder
+}
 pub fn config() {
     let conf_path = find_config_path().unwrap_or_else(|| PathBuf::from(DEFAULT_CONFIG_PATH));
     let config_folder = ensure_config_folder_exists(&conf_path).expect("Unable to create a config folder, please set 'XDG_CONFIG_HOME' in environment variables before running again.");
@@ -37,9 +45,8 @@ pub fn config() {
     let palette_folder =
         ensure_palette_folder_exists(&config_folder).expect("Folder should be good");
     // reader::read_program_config_file(program_config_file);
-    let palette_filenames = get_pallete_filesnames(palette_folder).unwrap();
-    let settings = reader::read_program_config_file(&program_config_file).unwrap();
-    let palettes = reader::read_colour_palettes(&config_folder);
+    let _settings = reader::read_program_config_file(&program_config_file).unwrap();
+    let _palettes = reader::read_colour_palettes(&config_folder);
 
     // println!("{:?}", &palettes);
 }

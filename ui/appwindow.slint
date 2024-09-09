@@ -1,18 +1,102 @@
-import { Button, VerticalBox } from "std-widgets.slint";
+import { Button, VerticalBox, ComboBox, HorizontalBox, ScrollView } from "std-widgets.slint";
+
+export struct ColorType {
+    name: string,
+    rgb: string,
+    // hex: string,
+    // hsl: string,
+    color: color,
+    }
+
+export struct PaletteType {
+    name: string,
+    colors: [ColorType],
+    }
+
+component ColorDisplay inherits Rectangle {
+    width: 30px;
+    height: root.width;
+    border-radius: root.width / 2;
+    padding: 5px;
+}
+
+component ColorName inherits Text { }
+
+component ColorRGB inherits Text { }
+
+component ColorHSL inherits Text { }
+
+component ColorHex inherits Text { }
+
+component ColorText inherits VerticalBox {
+    padding: 0px;
+    in property <string> text;
+    alignment: center;
+    Text {
+        text: text;
+    }
+}
+
+component ColorLine inherits HorizontalBox {
+    padding: 0px;
+    in property <ColorType> Color;
+
+    ColorDisplay {
+        background: Color.color;
+    }
+
+    ColorText {
+        text: Color.name;
+    }
+
+    ColorText {
+        text: Color.rgb;
+    }
+}
+
+component ColorPalette inherits VerticalBox {
+    in-out property <string> name;
+    in-out property <PaletteType> color-palette;
+    spacing: 5px;
+
+    // Text {
+    //     text: root.name;
+    // }
+
+    for line in color-palette.colors: color-lines := ColorLine {
+        Color: line;
+    }
+}
 
 export component AppWindow inherits Window {
-    in-out property <int> counter: 42;
-    callback request-increase-value();
+    title: "Colour Palette";
+
+    in-out property <PaletteType> palette;
+    in-out property <[string]> available-palette;
+    callback select-palette <=> palatte-selector.selected;
+    callback refesh-palettes <=> refresh-button.clicked;
+
     VerticalBox {
-        Text {
-            text: "Counter: \{root.counter}";
+        padding: 15px;
+        spacing: 0px;
+        alignment: center;
+        HorizontalBox {
+            alignment: center;
+            palatte-selector := ComboBox {
+
+                width: self.preferred-width;
+                height: self.preferred-height;
+                model: root.available-palette;
+                current-value: root.palette.name;
+            }
         }
 
-        Button {
-            text: "Increase value";
-            clicked => {
-                root.request-increase-value();
-            }
+        colour-palette := ColorPalette {
+            color-palette: root.palette;
+        }
+
+        refresh-button := Button {
+            text: "Refresh";
         }
     }
 }

@@ -1,16 +1,20 @@
 use std::{collections::BTreeMap, path::PathBuf};
 
+use slint::ModelRc;
 use uuid::Uuid;
 
+use super::{ColorType, PaletteType};
 use crate::color::Color;
+use slint::Color as Slint_Color;
+use slint::VecModel;
 
 #[allow(dead_code)]
 #[derive(Debug)]
 pub struct Palette {
-    name: String,
-    uuid: Uuid,
-    colors: BTreeMap<String, Color>,
-    filename: Option<PathBuf>,
+    pub name: String,
+    pub uuid: Uuid,
+    pub colors: BTreeMap<String, Color>,
+    pub filename: Option<PathBuf>,
 }
 
 #[allow(dead_code)]
@@ -44,6 +48,27 @@ impl Palette {
     pub fn len(&self) -> usize {
         self.colors.len()
     }
+
+    pub fn to_slint(&self) -> PaletteType {
+        PaletteType {
+            colors: ModelRc::new(VecModel::from(
+                self.colors
+                    .iter()
+                    .map(|(key, value)| ColorType {
+                        name: key.into(),
+                        color: Slint_Color::from_argb_u8(
+                            value.opacity,
+                            value.red,
+                            value.green,
+                            value.blue,
+                        ),
+                        rgb: value.str_rgba().into(),
+                    })
+                    .collect::<Vec<ColorType>>(),
+            )),
+            name: self.name.clone().into(),
+        }
+    }
 }
 
 #[cfg(test)]
@@ -52,13 +77,13 @@ mod palette_tests {
 
     #[test]
     fn test_create_palette() {
-        let input = Palette::new("Test Palette");
+        let input = Palette::new("Test Palette", None);
         assert_eq!(input.name, "Test Palette".to_string());
     }
 
     #[test]
     fn test_add_color() {
-        let mut input = Palette::new("Test Palette");
+        let mut input = Palette::new("Test Palette", None);
         let testblue1 = Color::new_solid(0, 0, 255);
         let testblue2 = Color::new_solid(0, 0, 255);
         let first = input.add_color("Test Blue".to_string(), testblue1);
@@ -72,7 +97,7 @@ mod palette_tests {
 
     #[test]
     fn test_get_color() {
-        let mut input = Palette::new("Test Palette");
+        let mut input = Palette::new("Test Palette", None);
         let testblue = Color::new_solid(0, 0, 255);
         let _ = input.add_color("Test Blue".to_string(), testblue);
         assert_eq!(input.get_color("Test Blue").unwrap(), &testblue)
@@ -80,7 +105,7 @@ mod palette_tests {
 
     #[test]
     fn test_remove_color() {
-        let mut input = Palette::new("Test Palette");
+        let mut input = Palette::new("Test Palette", None);
         let testblue = Color::new_solid(0, 0, 255);
         let _ = input.add_color("Test Blue".to_string(), testblue);
         assert_eq!(*input.colors.get("Test Blue").unwrap(), testblue);
@@ -94,7 +119,7 @@ mod palette_tests {
 
     #[test]
     fn test_len() {
-        let mut input = Palette::new("Test Palette");
+        let mut input = Palette::new("Test Palette", None);
         assert_eq!(input.len(), 0);
         let testblue = Color::new_solid(0, 0, 255);
         let _ = input.add_color("Test Blue".to_string(), testblue);
@@ -109,7 +134,7 @@ mod palette_tests {
 
     #[test]
     fn color_names() {
-        let mut palette = Palette::new("Test Palette");
+        let mut palette = Palette::new("Test Palette", None);
         let color1 = ("Test Color 1".to_string(), Color::from_hex("#FFF"));
         let color2 = ("Test Color 2".to_string(), Color::from_hex("#F00"));
         assert_eq!(palette.len(), 0);
