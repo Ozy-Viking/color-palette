@@ -4,6 +4,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use reader::get_pallete_filesnames;
 use slint::format;
 
 mod reader;
@@ -33,9 +34,14 @@ pub fn config() {
     let conf_path = find_config_path().unwrap_or_else(|| PathBuf::from(DEFAULT_CONFIG_PATH));
     let config_folder = ensure_config_folder_exists(&conf_path).expect("Unable to create a config folder, please set 'XDG_CONFIG_HOME' in environment variables before running again.");
     let program_config_file = ensure_program_config_file_exists(&config_folder).expect("");
-    let palette_folder = ensure_palette_folder_exists(&config_folder);
-    reader::read_file("hdjsaklhdjk".into());
-    // println!("{:?}", &palette_folder);
+    let palette_folder =
+        ensure_palette_folder_exists(&config_folder).expect("Folder should be good");
+    // reader::read_program_config_file(program_config_file);
+    let palette_filenames = get_pallete_filesnames(palette_folder).unwrap();
+    let settings = reader::read_program_config_file(&program_config_file).unwrap();
+    let palettes = reader::read_colour_palettes(&config_folder);
+
+    // println!("{:?}", &palettes);
 }
 
 fn find_config_path() -> Option<PathBuf> {

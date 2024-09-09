@@ -1,19 +1,27 @@
-use std::collections::BTreeMap;
+use std::{collections::BTreeMap, path::PathBuf};
+
+use uuid::Uuid;
 
 use crate::color::Color;
 
 #[allow(dead_code)]
+#[derive(Debug)]
 pub struct Palette {
     name: String,
+    uuid: Uuid,
     colors: BTreeMap<String, Color>,
+    filename: Option<PathBuf>,
 }
 
 #[allow(dead_code)]
 impl Palette {
-    pub fn new(name: &str) -> Self {
+    pub fn new(name: &str, filename: Option<PathBuf>) -> Self {
+        let uuid = Uuid::now_v6(&[1, 2, 3, 4, 5, 6]);
         Palette {
             name: name.to_string(),
+            uuid,
             colors: BTreeMap::new(),
+            filename,
         }
     }
 

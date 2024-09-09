@@ -383,6 +383,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "atomic"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8d818003e740b63afc82337e3160717f4f63078720a810b7b903e70a5d1d2994"
+dependencies = [
+ "bytemuck",
+]
+
+[[package]]
 name = "atomic-waker"
 version = "1.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -777,10 +786,12 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "config",
+ "glob",
  "num",
  "slint",
  "slint-build",
  "toml",
+ "uuid",
  "winnow 0.6.18",
 ]
 
@@ -817,6 +828,7 @@ checksum = "7328b20597b53c2454f0b1919720c25c7339051c02b72b7e05409e00b14132be"
 dependencies = [
  "async-trait",
  "convert_case 0.6.0",
+ "indexmap",
  "json5",
  "lazy_static",
  "nom",
@@ -2142,6 +2154,7 @@ checksum = "68b900aa2f7301e21c36462b170ee99994de34dff39a4a6a528e80e7376d07e5"
 dependencies = [
  "equivalent",
  "hashbrown 0.14.5",
+ "serde",
 ]
 
 [[package]]
@@ -3402,6 +3415,7 @@ checksum = "b91f7eff05f748767f183df4320a63d6936e9c6107d97c9e6bdd9784f4289c94"
 dependencies = [
  "base64 0.21.7",
  "bitflags 2.6.0",
+ "indexmap",
  "serde",
  "serde_derive",
 ]
@@ -3576,6 +3590,7 @@ version = "1.0.127"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8043c06d9f82bd7271361ed64f415fe5e12a77fdb52e573e7f06a516dea329ad"
 dependencies = [
+ "indexmap",
  "itoa",
  "memchr",
  "ryu",
@@ -4296,6 +4311,16 @@ dependencies = [
  "unicode-script",
  "unicode-vo",
  "xmlwriter",
+]
+
+[[package]]
+name = "uuid"
+version = "1.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "81dfa00651efa65069b0b6b651f4aaa31ba9e3c3ce0137aaad053604ee7e0314"
+dependencies = [
+ "atomic",
+ "getrandom",
 ]
 
 [[package]]
