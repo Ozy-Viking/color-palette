@@ -12,7 +12,8 @@ use crate::palette::Palette;
 pub const DEFAULT_SETTINGS: &str = "
 [General]
 test = false
-font = \"CaskaydiaCove 24pt\"
+font = \"CaskaydiaCove NF\"
+fontsize = \"14px\"
 foreground = \"#FFF\"
 background = \"#000\"
 ";

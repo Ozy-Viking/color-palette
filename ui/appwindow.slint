@@ -3,8 +3,8 @@ import { Button, VerticalBox, ComboBox, HorizontalBox, ScrollView } from "std-wi
 export struct ColorType {
     name: string,
     rgb: string,
-    // hex: string,
-    // hsl: string,
+    hex: string,
+    hsl: string,
     color: color,
     }
 
@@ -13,6 +13,10 @@ export struct PaletteType {
     colors: [ColorType],
     }
 
+export global Copy {
+    pure callback copy-on-click(string);
+}
+
 component ColorDisplay inherits Rectangle {
     width: 30px;
     height: root.width;
@@ -20,20 +24,22 @@ component ColorDisplay inherits Rectangle {
     padding: 5px;
 }
 
-component ColorName inherits Text { }
-
-component ColorRGB inherits Text { }
-
-component ColorHSL inherits Text { }
-
-component ColorHex inherits Text { }
-
 component ColorText inherits VerticalBox {
     padding: 0px;
     in property <string> text;
+    in property <int> font-weight: 450;
+    in-out property <color> color-text;
     alignment: center;
-    Text {
-        text: text;
+    touch := TouchArea {
+        Text {
+            text: text;
+            color: touch.has-hover ? color-text : Theme.foreground;
+            font-weight: font-weight;
+        }
+
+        clicked => {
+            Copy.copy-on-click(text);
+        }
     }
 }
 
@@ -45,31 +51,61 @@ component ColorLine inherits HorizontalBox {
         background: Color.color;
     }
 
-    ColorText {
-        text: Color.name;
-    }
+    VerticalBox {
+        alignment: center;
+        padding: 0px;
+        HorizontalBox {
+            alignment: space-between;
+            padding: 0px;
+            ColorText {
+                text: Color.name;
+                font-weight: 600;
+                color-text: Color.color;
+            }
 
-    ColorText {
-        text: Color.rgb;
+            ColorText {
+                text: Color.rgb;
+                color-text: Color.color;
+            }
+
+            ColorText {
+                text: Color.hex;
+                color-text: Color.color;
+            }
+
+            ColorText {
+                text: Color.hsl;
+                color-text: Color.color;
+            }
+        }
     }
 }
 
 component ColorPalette inherits VerticalBox {
     in-out property <string> name;
     in-out property <PaletteType> color-palette;
+    width: 100%;
     spacing: 5px;
-
-    // Text {
-    //     text: root.name;
-    // }
 
     for line in color-palette.colors: color-lines := ColorLine {
         Color: line;
     }
 }
 
+export global Theme {
+    in-out property <color> background: rgb(0,0,0);
+    in-out property <color> foreground: rgb(255,255,255);
+    in-out property <string> font-family: "CaskaydiaCove NF";
+    in-out property <length> font-size: 14px;
+    in-out property <length> color-size: 28px;
+}
+
 export component AppWindow inherits Window {
     title: "Colour Palette";
+    background: Theme.background;
+
+    default-font-family: Theme.font-family;
+    default-font-size: Theme.font-size;
 
     in-out property <PaletteType> palette;
     in-out property <[string]> available-palette;
@@ -95,8 +131,11 @@ export component AppWindow inherits Window {
             color-palette: root.palette;
         }
 
-        refresh-button := Button {
-            text: "Refresh";
+        HorizontalBox {
+            alignment: center;
+            refresh-button := Button {
+                text: "Refresh";
+            }
         }
     }
 }

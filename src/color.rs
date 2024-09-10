@@ -1,7 +1,9 @@
+use super::ColorType;
+use num::Float;
 use slint::format;
+use slint::Color as Slint_Color;
 use std::ops::Rem;
 use winnow::stream::SliceLen;
-
 pub const PRECISION_VAL: u32 = 5;
 
 /// # Color Struct
@@ -42,7 +44,7 @@ impl Color {
     }
 
     pub fn str_rgb(&self) -> String {
-        format!("{}, {}, {}", self.red, self.blue, self.blue).to_string()
+        format!("{},{},{}", self.red, self.blue, self.blue).to_string()
     }
 
     pub fn rgba(&self) -> (u8, u8, u8, u8) {
@@ -51,7 +53,7 @@ impl Color {
 
     pub fn str_rgba(&self) -> String {
         format!(
-            "{}, {}, {}, {}",
+            "rgba({},{},{},{})",
             self.red, self.blue, self.blue, self.opacity
         )
         .to_string()
@@ -98,6 +100,22 @@ impl Color {
         let (h, s, l) = self.hsl();
         let a = round_to(self.opacity as f64 / 255_f64, PRECISION_VAL);
         (h, s, l, a)
+    }
+    pub fn str_hsl(&self) -> String {
+        let hsl = self.hsl();
+        format!("hsl({},{},{})", hsl.0, hsl.1, hsl.2).to_string()
+    }
+
+    pub fn str_hsla(&self) -> String {
+        let hsl = self.hsla();
+        format!(
+            "hsla({},{}%,{}%,{}%)",
+            hsl.0.round(),
+            (hsl.1 * 100.0).round(),
+            (hsl.2 * 100.0).round(),
+            (hsl.3 * 100.0).round()
+        )
+        .to_string()
     }
 
     pub fn hex(&self) -> String {
@@ -170,6 +188,25 @@ impl Color {
 
     pub fn from_hsla() -> Self {
         todo!();
+    }
+
+    #[allow(clippy::wrong_self_convention)]
+    pub fn to_colortype(&self, name: &str) -> ColorType {
+        ColorType {
+            color: self.to_slint(),
+            name: name.into(),
+            rgb: self.str_rgba().into(),
+            hex: self.hex().into(),
+            hsl: self.str_hsla().into(),
+        }
+    }
+
+    pub fn to_slint(&self) -> Slint_Color {
+        Slint_Color::from_argb_u8(self.opacity, self.red, self.green, self.blue)
+    }
+
+    pub fn to_opaque(&self) -> Self {
+        Self::new_solid(self.red, self.green, self.blue)
     }
 }
 

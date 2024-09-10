@@ -3,7 +3,7 @@ use std::{collections::BTreeMap, path::PathBuf};
 use slint::ModelRc;
 use uuid::Uuid;
 
-use super::{ColorType, PaletteType};
+use super::{ColorType, PaletteType, Theme};
 use crate::color::Color;
 use slint::Color as Slint_Color;
 use slint::VecModel;
@@ -15,6 +15,11 @@ pub struct Palette {
     pub uuid: Uuid,
     pub colors: BTreeMap<String, Color>,
     pub filename: Option<PathBuf>,
+}
+
+pub struct ColorScheme {
+    pub foreground: Slint_Color,
+    pub background: Slint_Color,
 }
 
 #[allow(dead_code)]
@@ -41,7 +46,7 @@ impl Palette {
         self.colors.get(name)
     }
 
-    pub fn color_name(&self) -> Vec<String> {
+    pub fn color_names(&self) -> Vec<String> {
         self.colors.keys().cloned().collect()
     }
 
@@ -54,20 +59,56 @@ impl Palette {
             colors: ModelRc::new(VecModel::from(
                 self.colors
                     .iter()
-                    .map(|(key, value)| ColorType {
-                        name: key.into(),
-                        color: Slint_Color::from_argb_u8(
-                            value.opacity,
-                            value.red,
-                            value.green,
-                            value.blue,
-                        ),
-                        rgb: value.str_rgba().into(),
-                    })
+                    .map(|(key, value)| value.to_colortype(key.as_str()))
                     .collect::<Vec<ColorType>>(),
             )),
             name: self.name.clone().into(),
         }
+    }
+
+    pub fn background(&self) -> Option<Color> {
+        let color_names = self.color_names();
+        let bg_key_option: Option<&String> = color_names
+            .iter()
+            .find(|name| name.to_lowercase() == "bg" || name.to_lowercase() == "background");
+        let bg_key = match bg_key_option {
+            None => return None,
+            Some(key) => key.to_owned(),
+        };
+
+        let color = Some(self.get_color(&bg_key).unwrap().to_owned());
+        color
+    }
+
+    pub fn foreground(&self) -> Option<Color> {
+        let color_names = self.color_names();
+        let fg_key_option: Option<&String> = color_names.iter().find(|name| {
+            name.to_lowercase().trim() == "fg"
+                || name.to_lowercase().trim() == "foreground"
+                || name.to_lowercase().trim() == "text"
+        });
+        let fg_key = match fg_key_option {
+            None => return None,
+            Some(key) => key.to_owned(),
+        };
+
+        let color = Some(self.get_color(&fg_key).unwrap().to_owned());
+        color
+    }
+
+    pub fn to_slint_theme(&self) -> Option<ColorScheme> {
+        let background = match self.background() {
+            None => return None,
+            Some(bg) => bg.to_opaque().to_slint(),
+        };
+        let foreground = match self.foreground() {
+            None => return None,
+            Some(fg) => fg.to_opaque().to_slint(),
+        };
+        Some(ColorScheme {
+            foreground,
+            background,
+        })
     }
 }
 
